@@ -1,0 +1,94 @@
+/* Main Background */
+.main {
+    background: linear-gradient(
+        to bottom right,
+        #0f172a,
+        #111827
+    );
+    color: white;
+}
+
+/* Titles */
+h1, h2, h3 {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+/* Sidebar */
+[data-testid="stSidebar"] {
+    background: #111827;
+    border-right: 1px solid #1f2937;
+}
+
+/* Metric Cards */
+[data-testid="metric-container"] {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 20px;
+    border-radius: 18px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0px 4px 30px rgba(0,0,0,0.3);
+}
+
+/* Buttons */
+.stButton button {
+    background: linear-gradient(
+        135deg,
+        #6366f1,
+        #8b5cf6
+    );
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-weight: 600;
+    transition: 0.3s ease;
+}
+
+.stButton button:hover {
+    transform: scale(1.03);
+    background: linear-gradient(
+        135deg,
+        #7c3aed,
+        #6366f1
+    );
+}
+
+/* Dataframe Styling */
+.stDataFrame {
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+/* Upload Box */
+[data-testid="stFileUploader"] {
+    background: rgba(255,255,255,0.05);
+    border-radius: 16px;
+    padding: 10px;
+}
+
+/* Tabs */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 10px;
+}
+
+.stTabs [data-baseweb="tab"] {
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    padding: 10px 20px;
+}
+
+/* Success Message */
+.stSuccess {
+    border-radius: 12px;
+}
+
+/* Warning Message */
+.stWarning {
+    border-radius: 12px;
+}
+
+/* Info Box */
+.stInfo {
+    border-radius: 12px;
+}
