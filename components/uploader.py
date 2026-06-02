@@ -6,35 +6,57 @@ def upload_dataset():
     st.sidebar.markdown("""
     # 🚀 AI Analytics Dashboard
 
-    ### Features
-    - 📊 Visual Analytics
-    - 🤖 AI Insights
-    - 🧠 Machine Learning
-    - 📑 PDF Reports
-    - 🔥 Correlation Analysis
+    Upload ANY CSV dataset for:
+    - Visual Analytics
+    - AI Insights
+    - ML Predictions
+    - PDF Reports
     """)
 
-    st.sidebar.divider()
-
     uploaded_file = st.sidebar.file_uploader(
-        "📂 Upload CSV Dataset",
+        "📂 Upload CSV File",
         type=["csv"]
-    )
-
-    st.sidebar.divider()
-
-    st.sidebar.info(
-        "Built using Python, Streamlit, AI, and Machine Learning."
     )
 
     if uploaded_file is not None:
 
-        df = pd.read_csv(uploaded_file)
+        try:
 
-        st.sidebar.success(
-            "Dataset Loaded Successfully!"
-        )
+            # Try multiple encodings
+            try:
+                df = pd.read_csv(uploaded_file)
 
-        return df
+            except:
+                uploaded_file.seek(0)
+                df = pd.read_csv(
+                    uploaded_file,
+                    encoding='latin1'
+                )
+
+            # Remove fully empty rows/columns
+            df.dropna(
+                how='all',
+                inplace=True
+            )
+
+            df.dropna(
+                axis=1,
+                how='all',
+                inplace=True
+            )
+
+            st.sidebar.success(
+                "Dataset Loaded Successfully!"
+            )
+
+            return df
+
+        except Exception as e:
+
+            st.sidebar.error(
+                f"CSV Error: {e}"
+            )
+
+            return None
 
     return None

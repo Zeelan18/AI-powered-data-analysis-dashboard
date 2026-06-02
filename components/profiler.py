@@ -21,3 +21,5 @@ def show_profile(df):
     st.success(
         f"Rows: {df.shape[0]} | Columns: {df.shape[1]}"
     )
+
+

@@ -8,50 +8,87 @@ from sklearn.metrics import mean_absolute_error
 
 def train_ml_model(df):
 
-    st.subheader("🧠 Machine Learning Prediction")
+    st.subheader("🧠 Machine Learning")
 
-    numeric_cols = df.select_dtypes(include=np.number).columns.tolist()
+    numeric_cols = df.select_dtypes(
+        include=np.number
+    ).columns.tolist()
 
+    # VALIDATION
     if len(numeric_cols) < 2:
 
-        st.warning("Need at least 2 numeric columns.")
+        st.warning(
+            """
+            ML requires at least
+            2 numeric columns.
+            """
+        )
 
         return
 
     target = st.selectbox(
-        "Select Target Column",
+        "Select Target",
         numeric_cols
     )
 
-    features = [col for col in numeric_cols if col != target]
+    features = [
+        col for col in numeric_cols
+        if col != target
+    ]
 
-    X = df[features]
-    y = df[target]
+    if len(features) == 0:
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X,
-        y,
-        test_size=0.2,
-        random_state=42
-    )
+        st.warning(
+            "No feature columns available."
+        )
 
-    model = LinearRegression()
+        return
 
-    model.fit(X_train, y_train)
+    try:
 
-    predictions = model.predict(X_test)
+        X = df[features].fillna(0)
+        y = df[target].fillna(0)
 
-    error = mean_absolute_error(y_test, predictions)
+        X_train, X_test, y_train, y_test = train_test_split(
+            X,
+            y,
+            test_size=0.2,
+            random_state=42
+        )
 
-    st.success(f"Model trained successfully!")
+        model = LinearRegression()
 
-    st.write(f"Mean Absolute Error: {error:.2f}")
+        model.fit(
+            X_train,
+            y_train
+        )
 
-    st.write("### Predictions")
+        predictions = model.predict(X_test)
 
-    prediction_df = pd.DataFrame({
-        "Actual": y_test.values,
-        "Predicted": predictions
-    })
+        error = mean_absolute_error(
+            y_test,
+            predictions
+        )
 
-    st.dataframe(prediction_df)
+        st.success(
+            "ML Model Trained Successfully!"
+        )
+
+        st.metric(
+            "Mean Absolute Error",
+            round(error, 2)
+        )
+
+        prediction_df = pd.DataFrame({
+            "Actual": y_test.values,
+            "Predicted": predictions
+        })
+
+        st.dataframe(
+            prediction_df,
+            use_container_width=True
+        )
+
+    except Exception as e:
+
+        st.error(f"ML Error: {e}")

@@ -19,7 +19,19 @@ def generate_gemini_insights(df):
     st.subheader("✨ AI Analytics Assistant")
 
     # Dataset Summary
-    summary = df.describe().to_string()
+    summary = f"""
+    Dataset Columns:
+    {df.columns.tolist()}
+
+    Data Types:
+    {df.dtypes.to_string()}
+
+    Sample Data:
+    {df.head().to_string()}
+
+    Missing Values:
+    {df.isnull().sum().to_string()}
+    """
 
     prompt = f"""
     You are an expert AI Data Analyst.

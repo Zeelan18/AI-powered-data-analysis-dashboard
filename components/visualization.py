@@ -1,145 +1,172 @@
 import streamlit as st
 import plotly.express as px
+import pandas as pd
 import numpy as np
 
 def show_visualizations(df):
 
-    st.subheader("📊 Advanced Visualizations")
+    st.subheader("📊 Visual Analytics")
 
-    numeric_cols = df.select_dtypes(include=np.number).columns.tolist()
+    numeric_cols = df.select_dtypes(
+        include=np.number
+    ).columns.tolist()
 
-    if len(numeric_cols) > 0:
+    categorical_cols = df.select_dtypes(
+        include=['object']
+    ).columns.tolist()
+
+    # NO NUMERIC DATA
+    if len(numeric_cols) == 0:
+
+        st.warning(
+            "No numeric columns available."
+        )
+
+    else:
 
         chart_type = st.selectbox(
-            "Select Visualization Type",
+            "Select Chart Type",
             [
                 "Histogram",
                 "Box Plot",
                 "Scatter Plot",
-                "Line Chart",
-                "Bar Chart",
-                "Pie Chart"
+                "Line Chart"
             ]
         )
 
-        # Histogram
         if chart_type == "Histogram":
 
-            selected_col = st.selectbox(
+            col = st.selectbox(
                 "Select Column",
                 numeric_cols
             )
 
             fig = px.histogram(
                 df,
-                x=selected_col,
-                template="plotly_dark",
-                title=f"{selected_col} Distribution"
+                x=col,
+                template="plotly_dark"
             )
 
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
 
-        # Box Plot
         elif chart_type == "Box Plot":
 
-            selected_col = st.selectbox(
+            col = st.selectbox(
                 "Select Column",
                 numeric_cols
             )
 
             fig = px.box(
                 df,
-                y=selected_col,
-                template="plotly_dark",
-                title=f"{selected_col} Box Plot"
+                y=col,
+                template="plotly_dark"
             )
 
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
 
-        # Scatter Plot
         elif chart_type == "Scatter Plot":
 
-            x_axis = st.selectbox("X Axis", numeric_cols)
-            y_axis = st.selectbox("Y Axis", numeric_cols)
+            if len(numeric_cols) >= 2:
 
-            fig = px.scatter(
-                df,
-                x=x_axis,
-                y=y_axis,
-                template="plotly_dark",
-                title=f"{x_axis} vs {y_axis}"
-            )
+                x_col = st.selectbox(
+                    "X Axis",
+                    numeric_cols
+                )
 
-            st.plotly_chart(fig, use_container_width=True)
+                y_col = st.selectbox(
+                    "Y Axis",
+                    numeric_cols
+                )
 
-        # Line Chart
+                fig = px.scatter(
+                    df,
+                    x=x_col,
+                    y=y_col,
+                    template="plotly_dark"
+                )
+
+                st.plotly_chart(
+                    fig,
+                    use_container_width=True
+                )
+
+            else:
+
+                st.warning(
+                    "Need at least 2 numeric columns."
+                )
+
         elif chart_type == "Line Chart":
 
-            selected_col = st.selectbox(
+            col = st.selectbox(
                 "Select Column",
                 numeric_cols
             )
 
             fig = px.line(
                 df,
-                y=selected_col,
-                template="plotly_dark",
-                title=f"{selected_col} Trend"
+                y=col,
+                template="plotly_dark"
             )
 
-            st.plotly_chart(fig, use_container_width=True)
-
-        # Bar Chart
-        elif chart_type == "Bar Chart":
-
-            selected_col = st.selectbox(
-                "Select Column",
-                numeric_cols
+            st.plotly_chart(
+                fig,
+                use_container_width=True
             )
 
-            fig = px.bar(
-                df,
-                y=selected_col,
-                template="plotly_dark",
-                title=f"{selected_col} Bar Analysis"
-            )
+    # CATEGORICAL ANALYSIS
+    if len(categorical_cols) > 0:
 
-            st.plotly_chart(fig, use_container_width=True)
+        st.subheader("📌 Categorical Analysis")
 
-        # Pie Chart
-        elif chart_type == "Pie Chart":
+        cat_col = st.selectbox(
+            "Select Category Column",
+            categorical_cols
+        )
 
-            selected_col = st.selectbox(
-                "Select Column",
-                numeric_cols
-            )
+        cat_counts = (
+            df[cat_col]
+            .value_counts()
+            .reset_index()
+        )
 
-            pie_df = df[selected_col].value_counts().reset_index()
+        cat_counts.columns = [
+            "Category",
+            "Count"
+        ]
 
-            pie_df.columns = ["Category", "Count"]
+        fig = px.bar(
+            cat_counts,
+            x="Category",
+            y="Count",
+            template="plotly_dark"
+        )
 
-            fig = px.pie(
-                pie_df,
-                names="Category",
-                values="Count",
-                template="plotly_dark",
-                title=f"{selected_col} Pie Distribution"
-            )
+        st.plotly_chart(
+            fig,
+            use_container_width=True
+        )
 
-            st.plotly_chart(fig, use_container_width=True)
-
-    # Correlation Heatmap
-    if len(numeric_cols) > 1:
+    # CORRELATION
+    if len(numeric_cols) >= 2:
 
         st.subheader("🔥 Correlation Heatmap")
 
         corr = df[numeric_cols].corr()
 
-        heatmap = px.imshow(
+        fig = px.imshow(
             corr,
             text_auto=True,
-            color_continuous_scale="RdBu_r",
-            title="Feature Correlation Matrix"
+            color_continuous_scale="RdBu_r"
         )
 
-        st.plotly_chart(heatmap, use_container_width=True)
+        st.plotly_chart(
+            fig,
+            use_container_width=True
+        )
