@@ -30,7 +30,7 @@ The system automatically adapts to uploaded CSV files and provides meaningful an
 
 🔗 Live Application:
 
-PASTE_YOUR_STREAMLIT_LINK_HERE
+https://ai-powered-data-analysis-dashboard.streamlit.app/
 
 ---
 
